@@ -19,6 +19,7 @@ interface MetadataStageProps {
   onExport: () => void;
   isExporting: boolean;
   exportProgress: number;
+  exportError: string | null;
   onBack: () => void;
 }
 
@@ -35,6 +36,7 @@ function MetadataStage({
   onExport,
   isExporting,
   exportProgress,
+  exportError,
   onBack,
 }: MetadataStageProps) {
   const hasResults = results.length > 0;
@@ -156,6 +158,20 @@ function MetadataStage({
                 className="w-full h-3 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-moz-progress-bar]:bg-primary [&::-moz-progress-bar]:rounded-full"
               />
               <p className="text-xs text-text-muted text-right">{exportProgress}%</p>
+            </div>
+          )}
+
+          {exportError && !isExporting && (
+            <div className="bg-red-50 p-4 rounded-2xl border border-red-200 flex items-start gap-3">
+              <span className="text-red-500 shrink-0 mt-0.5">⚠</span>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-red-800">내보내기 실패</p>
+                <p className="text-xs text-red-600">{exportError}</p>
+                <p className="text-xs text-text-muted">
+                  인앱 브라우저에서는 다운로드가 제한될 수 있습니다. Safari 또는 Chrome에서 다시
+                  시도해 주세요.
+                </p>
+              </div>
             </div>
           )}
 

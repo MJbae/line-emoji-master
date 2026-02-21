@@ -107,6 +107,7 @@ function App() {
   const [metadataLoading, setMetadataLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [selectedMetaMap, setSelectedMetaMap] = useState<Map<LanguageCode, MetaResult>>(new Map());
 
@@ -489,6 +490,7 @@ function App() {
   const runExport = useCallback(async () => {
     setExporting(true);
     setExportProgress(0);
+    setExportError(null);
     try {
       const state = useAppStore.getState();
       const processedImages = state.processedImages;
@@ -506,11 +508,13 @@ function App() {
       setExportProgress(80);
       const arrayBuffer = await blob.arrayBuffer();
       const data = new Uint8Array(arrayBuffer);
-      const fileName = `emoji_${defaultPlatform}_${Date.now()}.zip`;
+      const fileName = `line_emoji_${Math.floor(Math.random() * 900000 + 100000)}.zip`;
       await platform.saveFile(data, fileName);
       setExportProgress(100);
     } catch (e) {
+      const msg = e instanceof Error ? e.message : '내보내기에 실패했습니다';
       console.error('Export failed:', e);
+      setExportError(msg);
     } finally {
       setExporting(false);
     }
@@ -616,6 +620,7 @@ function App() {
             onExport={runExport}
             isExporting={exporting}
             exportProgress={exportProgress}
+            exportError={exportError}
             onBack={prevStage}
           />
         );

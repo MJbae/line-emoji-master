@@ -5,6 +5,10 @@ import { base64ToBlob } from '@/utils/base64';
 import { loadImage } from './core';
 import { resizeAndCrop, resizeImage } from './resize';
 
+function yieldToMain(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 export async function generateStickerZip(
   stickers: Sticker[],
   platformId: PlatformId,
@@ -31,6 +35,8 @@ export async function generateStickerZip(
 
     const fileName = platform.fileNameFormat(i);
     zip.file(fileName, base64ToBlob(processedBase64));
+
+    if (i % 5 === 4) await yieldToMain();
   }
 
   const mainImg = await loadImage(mainImageBase64);
@@ -63,6 +69,8 @@ export async function generatePostProcessedZip(
 
     const fileName = platform.fileNameFormat(i);
     zip.file(fileName, base64ToBlob(resized));
+
+    if (i % 5 === 4) await yieldToMain();
   }
 
   if (images.length > 0) {
