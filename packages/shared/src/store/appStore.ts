@@ -19,7 +19,6 @@ export const useAppStore = create<AppState>()(
       name: 'emoticon-studio-config',
       partialize: (state) => ({
         language: state.language,
-        defaultPlatform: state.defaultPlatform,
       }),
     },
   ),
