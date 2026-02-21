@@ -32,7 +32,6 @@ export interface UserInput {
   concept: string;
   referenceImage: string | null; // Base64
   language: 'Korean' | 'Japanese' | 'Traditional Chinese';
-  noText?: boolean;
 }
 
 export interface CharacterSpec {
@@ -48,18 +47,8 @@ export interface PersonaInsight {
   analysis: string;
 }
 
-export interface TextStyleOption {
-  id: string;
-  title: string;
-  colorDescription: string;
-  styleDescription: string;
-  reasoning: string;
-  score: number;
-}
-
 export interface LLMStrategy {
   selectedVisualStyleIndex: number;
-  selectedTextStyle: TextStyleOption;
   culturalNotes: string;
   salesReasoning: string;
   personaInsights: PersonaInsight[];
@@ -69,7 +58,6 @@ export interface EmoteIdea {
   id: number;
   expression: string;
   action: string;
-  text: string;
   category: string;
   useCase: string;
   imagePrompt: string;

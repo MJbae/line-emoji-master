@@ -18,7 +18,6 @@ import type { Stage, JobProgress } from '@/types/api';
 export interface GenerateOptions {
   concept: string;
   language: UserInput['language'];
-  noText: boolean;
   referenceImage: string | null;
   apiKey: string | null;
   platforms: PlatformId[];

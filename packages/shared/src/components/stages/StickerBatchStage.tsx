@@ -11,7 +11,7 @@ interface StickerBatchStageProps {
   onRegenerate: (id: number) => void;
   onContinue: () => void;
   onBack: () => void;
-  onEditIdea: (id: number, updates: { imagePrompt?: string; text?: string }) => void;
+  onEditIdea: (id: number, updates: { imagePrompt?: string }) => void;
 }
 
 function StickerBatchStage({
@@ -25,16 +25,14 @@ function StickerBatchStage({
 }: StickerBatchStageProps) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editPrompt, setEditPrompt] = useState('');
-  const [editText, setEditText] = useState('');
 
   const startEdit = (sticker: Sticker) => {
     setEditingId(sticker.id);
     setEditPrompt(sticker.idea.imagePrompt);
-    setEditText(sticker.idea.text);
   };
   const cancelEdit = () => setEditingId(null);
   const saveEdit = (id: number) => {
-    onEditIdea(id, { imagePrompt: editPrompt, text: editText });
+    onEditIdea(id, { imagePrompt: editPrompt });
     setEditingId(null);
   };
 
@@ -162,11 +160,6 @@ function StickerBatchStage({
                 <p className="text-xs font-bold text-slate-900 leading-tight line-clamp-2">
                   {sticker.idea.expression}
                 </p>
-                {sticker.idea.text && (
-                  <p className="text-xs text-primary font-medium truncate">
-                    &ldquo;{sticker.idea.text}&rdquo;
-                  </p>
-                )}
                 <div className="flex justify-between items-center text-[10px] text-text-muted border-t border-slate-100 pt-1 mt-1">
                   <span>#{sticker.id}</span>
                   <span>{sticker.idea.category}</span>
@@ -186,20 +179,6 @@ function StickerBatchStage({
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
                     aria-label="Edit generation prompt"
                     data-testid={`edit-prompt-${sticker.id}`}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">
-                    텍스트 오버레이 (최대 4자)
-                  </label>
-                  <input
-                    type="text"
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value.slice(0, 4))}
-                    maxLength={4}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                    aria-label="Edit text overlay"
-                    data-testid={`edit-text-${sticker.id}`}
                   />
                 </div>
                 <div className="flex gap-2 justify-end">

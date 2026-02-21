@@ -1,4 +1,4 @@
-import type { CharacterSpec, EmoteIdea, TextStyleOption } from '@/types/domain';
+import type { CharacterSpec, EmoteIdea } from '@/types/domain';
 import { getCulturalContext } from './expertPanel';
 
 export function buildBaseCharacterPrompt(
@@ -26,10 +26,7 @@ DO NOT include any text.
 `;
 }
 
-export function buildVisualVariationPrompt(
-  promptPrefix: string,
-  language: string,
-): string {
+export function buildVisualVariationPrompt(promptPrefix: string, language: string): string {
   const culturalContext = getCulturalContext(language);
 
   return `
@@ -107,12 +104,10 @@ Popular Traditional Chinese LINE emoji categories for high sales:
 export function buildEmoteIdeasPrompt(
   concept: string,
   language: string,
-  textStyle: TextStyleOption,
   visualStyleName: string,
   characterSpec: CharacterSpec,
   strategyContext: { salesReasoning: string; culturalNotes: string },
 ): string {
-  const isNoText = textStyle.id === 'no-text';
   const culturalContext = getCulturalContext(language);
   const languageSpecificCategories = getLanguageSpecificCategories(language);
 
@@ -121,7 +116,6 @@ Generate 45 unique emoji ideas optimized for LINE messenger emoji sales.
 These will display at 180x180px — prioritize clear, bold designs.
 Character: ${concept}
 Style: ${visualStyleName}
-Text Style: ${isNoText ? 'NO TEXT (Image only)' : textStyle.styleDescription}
 Language: ${language}
 
 CHARACTER REFERENCE (use this to write accurate imagePrompt descriptions):
@@ -155,7 +149,7 @@ Each imagePrompt must be a SINGLE SENTENCE that:
 3. Is vivid enough to guide image generation but not overly detailed
 
 CRITICAL RULES:
-${isNoText ? '- TEXT FIELD MUST BE EMPTY STRING ("") FOR ALL ITEMS. DO NOT GENERATE TEXT.' : `- Text must be 1-4 characters MAX in ${language}.`}
+- DO NOT include any text on the emoji. Image only.
 - Distinct silhouettes for each emote.
 - Exaggerated expressions for visibility at small sizes.
 - Prioritize emoji that users will send MOST OFTEN in LINE conversations.
@@ -163,19 +157,7 @@ ${isNoText ? '- TEXT FIELD MUST BE EMPTY STRING ("") FOR ALL ITEMS. DO NOT GENER
 `;
 }
 
-export function buildSingleEmotePrompt(
-  idea: EmoteIdea,
-  characterSpec: CharacterSpec,
-  textStyle: TextStyleOption,
-): string {
-  const isNoText = textStyle.id === 'no-text';
-
-  const textInstruction = isNoText
-    ? 'ABSOLUTELY NO TEXT. PURE IMAGE ONLY.'
-    : idea.text
-      ? `Text overlay: "${idea.text}". Text MUST BE HUGE, BOLD, and highly readable even at small sticker size. Text MUST be rendered IN FRONT OF the character, ON TOP of everything, clearly visible and NEVER hidden behind or occluded by any part of the character. Place text in a prominent position (top or bottom of the sticker). Color: ${textStyle.colorDescription}.`
-      : 'No text overlay for this sticker.';
-
+export function buildSingleEmotePrompt(idea: EmoteIdea, characterSpec: CharacterSpec): string {
   return `
 Generate a LINE messenger emoji (will display at 180x180px).
 
@@ -190,7 +172,7 @@ ${characterSpec.facialFeatures}
 The face structure, eye shape, nose, mouth, and all facial details MUST be IDENTICAL to the reference image. Only the EXPRESSION changes (e.g., smile vs frown), never the underlying facial structure.
 
 STICKER SCENE: ${idea.imagePrompt}
-${textInstruction}
+ABSOLUTELY NO TEXT. PURE IMAGE ONLY.
 
 RULES:
 1. The character MUST look identical to the reference image - same colors, proportions, facial features.

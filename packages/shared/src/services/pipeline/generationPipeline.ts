@@ -2,13 +2,7 @@
 // Generation Pipeline — Strategy -> Character -> Stickers
 // ===================================================================
 
-import type {
-  UserInput,
-  LLMStrategy,
-  CharacterSpec,
-  Sticker,
-  EmoteIdea,
-} from '@/types/domain';
+import type { UserInput, LLMStrategy, CharacterSpec, Sticker, EmoteIdea } from '@/types/domain';
 import type { JobProgress } from '@/types/api';
 import {
   analyzeConcept,
@@ -56,16 +50,20 @@ function emitProgress(
 function delay(ms: number, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(resolve, ms);
-    signal?.addEventListener('abort', () => {
-      clearTimeout(timer);
-      reject(
-        new ServiceError({
-          code: 'CANCELLED',
-          message: 'Pipeline cancelled',
-          retryable: false,
-        }),
-      );
-    }, { once: true });
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer);
+        reject(
+          new ServiceError({
+            code: 'CANCELLED',
+            message: 'Pipeline cancelled',
+            retryable: false,
+          }),
+        );
+      },
+      { once: true },
+    );
   });
 }
 
@@ -80,43 +78,59 @@ export async function runGenerationPipeline(
   try {
     // Stage 1: Concept analysis
     checkAborted(signal);
-    emitProgress(jobId, {
-      stage: 'concept-analysis',
-      current: 0,
-      total: 1,
-      message: 'Analyzing concept...',
-    }, onProgress);
+    emitProgress(
+      jobId,
+      {
+        stage: 'concept-analysis',
+        current: 0,
+        total: 1,
+        message: 'Analyzing concept...',
+      },
+      onProgress,
+    );
 
     const strategy = await analyzeConcept(input);
     state.setStrategy(strategy);
     getAppState().updateJob(jobId, { strategy });
 
-    emitProgress(jobId, {
-      stage: 'concept-analysis',
-      current: 1,
-      total: 1,
-      message: 'Concept analysis complete',
-    }, onProgress);
+    emitProgress(
+      jobId,
+      {
+        stage: 'concept-analysis',
+        current: 1,
+        total: 1,
+        message: 'Concept analysis complete',
+      },
+      onProgress,
+    );
 
     // Stage 2: Base character generation
     checkAborted(signal);
-    emitProgress(jobId, {
-      stage: 'character-generation',
-      current: 0,
-      total: 2,
-      message: 'Generating base character...',
-    }, onProgress);
+    emitProgress(
+      jobId,
+      {
+        stage: 'character-generation',
+        current: 0,
+        total: 2,
+        message: 'Generating base character...',
+      },
+      onProgress,
+    );
 
     const baseImage = await generateBaseCharacter(input);
 
     // Stage 3: Visual style variation
     checkAborted(signal);
-    emitProgress(jobId, {
-      stage: 'style-selection',
-      current: 0,
-      total: 1,
-      message: 'Applying visual style...',
-    }, onProgress);
+    emitProgress(
+      jobId,
+      {
+        stage: 'style-selection',
+        current: 0,
+        total: 1,
+        message: 'Applying visual style...',
+      },
+      onProgress,
+    );
 
     const mainImage = await generateVisualVariation(
       baseImage,
@@ -129,46 +143,61 @@ export async function runGenerationPipeline(
       processedImages: [],
     });
 
-    emitProgress(jobId, {
-      stage: 'style-selection',
-      current: 1,
-      total: 1,
-      message: 'Visual style applied',
-    }, onProgress);
+    emitProgress(
+      jobId,
+      {
+        stage: 'style-selection',
+        current: 1,
+        total: 1,
+        message: 'Visual style applied',
+      },
+      onProgress,
+    );
 
     // Stage 4: Extract character spec
     checkAborted(signal);
-    emitProgress(jobId, {
-      stage: 'character-generation',
-      current: 1,
-      total: 2,
-      message: 'Extracting character specification...',
-    }, onProgress);
+    emitProgress(
+      jobId,
+      {
+        stage: 'character-generation',
+        current: 1,
+        total: 2,
+        message: 'Extracting character specification...',
+      },
+      onProgress,
+    );
 
     const characterSpec = await extractCharacterSpec(mainImage, input.concept);
     state.setCharacterSpec(characterSpec);
     getAppState().updateJob(jobId, { characterSpec });
 
-    emitProgress(jobId, {
-      stage: 'character-generation',
-      current: 2,
-      total: 2,
-      message: 'Character specification extracted',
-    }, onProgress);
+    emitProgress(
+      jobId,
+      {
+        stage: 'character-generation',
+        current: 2,
+        total: 2,
+        message: 'Character specification extracted',
+      },
+      onProgress,
+    );
 
     // Stage 5: Emote ideation
     checkAborted(signal);
-    emitProgress(jobId, {
-      stage: 'emote-ideation',
-      current: 0,
-      total: 1,
-      message: 'Generating emote ideas...',
-    }, onProgress);
+    emitProgress(
+      jobId,
+      {
+        stage: 'emote-ideation',
+        current: 0,
+        total: 1,
+        message: 'Generating emote ideas...',
+      },
+      onProgress,
+    );
 
     const selectedStyle = VISUAL_STYLES[strategy.selectedVisualStyleIndex];
     const emoteIdeas = await generateEmoteIdeas(
       input,
-      strategy.selectedTextStyle,
       selectedStyle?.name ?? 'Original',
       characterSpec,
       {
@@ -185,12 +214,16 @@ export async function runGenerationPipeline(
     }));
     state.setStickers(initialStickers);
 
-    emitProgress(jobId, {
-      stage: 'emote-ideation',
-      current: 1,
-      total: 1,
-      message: `Generated ${emoteIdeas.length} emote ideas`,
-    }, onProgress);
+    emitProgress(
+      jobId,
+      {
+        stage: 'emote-ideation',
+        current: 1,
+        total: 1,
+        message: `Generated ${emoteIdeas.length} emote ideas`,
+      },
+      onProgress,
+    );
 
     // Stage 6: Generate sticker images in chunks
     checkAborted(signal);
@@ -212,12 +245,7 @@ export async function runGenerationPipeline(
         getAppState().updateSticker(idea.id, { status: 'loading' });
 
         try {
-          const imageData = await generateSingleEmote(
-            idea,
-            mainImage,
-            strategy.selectedTextStyle,
-            characterSpec,
-          );
+          const imageData = await generateSingleEmote(idea, mainImage, characterSpec);
 
           stickers[stickerIndex] = {
             ...stickers[stickerIndex]!,
@@ -240,12 +268,16 @@ export async function runGenerationPipeline(
       await Promise.all(chunkPromises);
       completedCount = chunkEnd;
 
-      emitProgress(jobId, {
-        stage: 'sticker-generation',
-        current: completedCount,
-        total: totalStickers,
-        message: `Generated ${completedCount}/${totalStickers} stickers`,
-      }, onProgress);
+      emitProgress(
+        jobId,
+        {
+          stage: 'sticker-generation',
+          current: completedCount,
+          total: totalStickers,
+          message: `Generated ${completedCount}/${totalStickers} stickers`,
+        },
+        onProgress,
+      );
 
       // Delay between chunks to avoid rate limiting (skip after last chunk)
       if (chunkEnd < totalStickers) {
@@ -257,7 +289,10 @@ export async function runGenerationPipeline(
 
     return { strategy, mainImage, characterSpec, stickers };
   } catch (error) {
-    const normalized = normalizeError(error, getAppState().getJob(jobId)?.currentStage ?? undefined);
+    const normalized = normalizeError(
+      error,
+      getAppState().getJob(jobId)?.currentStage ?? undefined,
+    );
     getAppState().updateJob(jobId, {
       error: {
         code: normalized.code,

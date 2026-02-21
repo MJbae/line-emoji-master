@@ -13,10 +13,7 @@ export function getCulturalContext(language: string): string {
   }
 }
 
-export function buildMarketAnalystPrompt(
-  concept: string,
-  language: string,
-): string {
+export function buildMarketAnalystPrompt(concept: string, language: string): string {
   const culturalContext = getCulturalContext(language);
   return `
 You are a Senior LINE Emoji Market Analyst with 10+ years of experience in the ${language} digital goods market.
@@ -66,18 +63,14 @@ ${visualStyleDescriptions}
 
 Cover these points concisely:
 1. Which visual style index (0-4) best fits this concept AND market? Why?
-2. Text treatment recommendation: font style, colors, bold/playful/elegant/minimal, or "no-text" if pure illustration works better.
-3. Color palette strategy for maximum shelf appeal at tiny emoji sizes (180x180px).
-4. How does this concept translate visually for the ${language} audience?
+2. Color palette strategy for maximum shelf appeal at tiny emoji sizes (180x180px).
+3. How does this concept translate visually for the ${language} audience?
 
 Be decisive — give clear recommendations, not options.
 `;
 }
 
-export function buildCulturalExpertPrompt(
-  concept: string,
-  language: string,
-): string {
+export function buildCulturalExpertPrompt(concept: string, language: string): string {
   return `
 You are a Cultural Marketing Expert for East Asian digital markets, specializing in the ${language} region.
 
@@ -122,9 +115,8 @@ Target Market: ${language}
 YOUR TASK: Make the definitive creative and commercial decisions by integrating all expert inputs.
 
 1. SELECT the single best visual style index (0-4).
-2. DESIGN the optimal text style (id, title, colorDescription, styleDescription, reasoning, score 0-1). Set id to "no-text" if pure illustration is better.
-3. EXPLAIN cultural considerations that shaped your decisions.
-4. PROVIDE the commercial reasoning behind your final strategy.
+2. EXPLAIN cultural considerations that shaped your decisions.
+3. PROVIDE the commercial reasoning behind your final strategy.
 
 Be decisive. This is the final call — no hedging.
 `;

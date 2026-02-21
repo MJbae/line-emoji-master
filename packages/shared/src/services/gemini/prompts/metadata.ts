@@ -8,14 +8,14 @@ export function buildMetadataSystemInstruction(
   strategy?: LLMStrategy | null,
   characterSpec?: CharacterSpec | null,
 ): string {
-  const languageInfo = languages.find(l => l.code === targetLang);
+  const languageInfo = languages.find((l) => l.code === targetLang);
   const languageName = languageInfo?.label ?? 'English';
   const nativeName = languageInfo?.nativeName ?? 'English';
 
   let strategyContext = '';
   if (strategy) {
     const personaSummary = strategy.personaInsights
-      .map(p => `- ${p.persona}: ${p.analysis.slice(0, 200)}`)
+      .map((p) => `- ${p.persona}: ${p.analysis.slice(0, 200)}`)
       .join('\n');
     strategyContext = `
 ## Creative Strategy Context (USE THIS to generate compelling, non-generic metadata)
@@ -26,11 +26,6 @@ ${strategy.salesReasoning}
 
 ### Cultural Optimization
 ${strategy.culturalNotes}
-
-### Visual & Text Style Direction
-- Text Style: ${strategy.selectedTextStyle.title} — ${strategy.selectedTextStyle.styleDescription}
-- Color Direction: ${strategy.selectedTextStyle.colorDescription}
-- Creative Reasoning: ${strategy.selectedTextStyle.reasoning}
 
 ### Expert Panel Insights
 ${personaSummary}

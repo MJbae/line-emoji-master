@@ -12,7 +12,6 @@ import type {
   Sticker,
   ProcessedImage,
   MetaResult,
-  TextStyleOption,
 } from '@/types/domain';
 
 import {
@@ -261,22 +260,9 @@ function App() {
     if (!state.userInput || !state.strategy || !state.mainImage || !state.characterSpec) return;
     setStickerGenerating(true);
     try {
-      const isNoText = state.userInput.noText ?? false;
-      const effectiveTextStyle: TextStyleOption = isNoText
-        ? {
-            id: 'no-text',
-            title: 'No Text',
-            colorDescription: '',
-            styleDescription: 'Image only, no text',
-            reasoning: 'User selected no-text mode',
-            score: 0,
-          }
-        : state.strategy.selectedTextStyle;
-
       const selectedStyle = VISUAL_STYLES[state.strategy.selectedVisualStyleIndex];
       const ideas = await generateEmoteIdeas(
         state.userInput,
-        effectiveTextStyle,
         selectedStyle?.name ?? 'Original',
         state.characterSpec,
         {
@@ -302,9 +288,7 @@ function App() {
             const imageData = await generateSingleEmote(
               idea,
               state.mainImage!,
-              effectiveTextStyle,
               state.characterSpec!,
-              isNoText,
             );
             useAppStore.getState().updateSticker(idea.id, { imageUrl: imageData, status: 'done' });
           } catch {
@@ -342,26 +326,12 @@ function App() {
     const sticker = state.stickers.find((s) => s.id === id);
     if (!sticker) return;
 
-    const isNoText = state.userInput?.noText ?? false;
-    const effectiveTextStyle: TextStyleOption = isNoText
-      ? {
-          id: 'no-text',
-          title: 'No Text',
-          colorDescription: '',
-          styleDescription: 'Image only, no text',
-          reasoning: 'User selected no-text mode',
-          score: 0,
-        }
-      : state.strategy.selectedTextStyle;
-
     useAppStore.getState().updateSticker(id, { status: 'loading' });
     try {
       const imageData = await generateSingleEmote(
         sticker.idea,
         state.mainImage,
-        effectiveTextStyle,
         state.characterSpec,
-        isNoText,
       );
       useAppStore.getState().updateSticker(id, { imageUrl: imageData, status: 'done' });
     } catch {
@@ -369,45 +339,28 @@ function App() {
     }
   }, []);
 
-  const editStickerIdea = useCallback(
-    async (id: number, updates: { imagePrompt?: string; text?: string }) => {
-      const state = useAppStore.getState();
-      const sticker = state.stickers.find((s) => s.id === id);
-      if (!sticker) return;
+  const editStickerIdea = useCallback(async (id: number, updates: { imagePrompt?: string }) => {
+    const state = useAppStore.getState();
+    const sticker = state.stickers.find((s) => s.id === id);
+    if (!sticker) return;
 
-      const updatedIdea = { ...sticker.idea, ...updates };
-      state.updateSticker(id, { idea: updatedIdea });
+    const updatedIdea = { ...sticker.idea, ...updates };
+    state.updateSticker(id, { idea: updatedIdea });
 
-      if (!state.mainImage || !state.strategy || !state.characterSpec) return;
+    if (!state.mainImage || !state.strategy || !state.characterSpec) return;
 
-      const isNoText = state.userInput?.noText ?? false;
-      const effectiveTextStyle: TextStyleOption = isNoText
-        ? {
-            id: 'no-text',
-            title: 'No Text',
-            colorDescription: '',
-            styleDescription: 'Image only, no text',
-            reasoning: 'User selected no-text mode',
-            score: 0,
-          }
-        : state.strategy.selectedTextStyle;
-
-      state.updateSticker(id, { status: 'loading' });
-      try {
-        const imageData = await generateSingleEmote(
-          updatedIdea,
-          state.mainImage,
-          effectiveTextStyle,
-          state.characterSpec,
-          isNoText,
-        );
-        useAppStore.getState().updateSticker(id, { imageUrl: imageData, status: 'done' });
-      } catch {
-        useAppStore.getState().updateSticker(id, { status: 'error' });
-      }
-    },
-    [],
-  );
+    state.updateSticker(id, { status: 'loading' });
+    try {
+      const imageData = await generateSingleEmote(
+        updatedIdea,
+        state.mainImage,
+        state.characterSpec,
+      );
+      useAppStore.getState().updateSticker(id, { imageUrl: imageData, status: 'done' });
+    } catch {
+      useAppStore.getState().updateSticker(id, { status: 'error' });
+    }
+  }, []);
 
   const handleMetaSelect = useCallback((result: MetaResult) => {
     setSelectedMetaMap((prev) => {

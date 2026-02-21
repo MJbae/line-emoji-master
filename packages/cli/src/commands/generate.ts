@@ -11,7 +11,6 @@ const ALL_PLATFORMS: PlatformId[] = ['ogq_sticker', 'line_sticker', 'line_emoji'
 export async function generate(opts: {
   concept: string;
   language: string;
-  noText: boolean;
   referenceImage?: string;
   apiKey?: string;
   platforms: string;
@@ -57,9 +56,9 @@ export async function generate(opts: {
   const platforms: PlatformId[] =
     opts.platforms === 'all'
       ? ALL_PLATFORMS
-      : (opts.platforms.split(',').filter((p) =>
-          ALL_PLATFORMS.includes(p as PlatformId),
-        ) as PlatformId[]);
+      : (opts.platforms
+          .split(',')
+          .filter((p) => ALL_PLATFORMS.includes(p as PlatformId)) as PlatformId[]);
 
   if (platforms.length === 0) {
     printError({
@@ -84,7 +83,6 @@ export async function generate(opts: {
   const generateOptions: GenerateOptions = {
     concept: opts.concept,
     language,
-    noText: opts.noText,
     referenceImage: opts.referenceImage ?? null,
     apiKey,
     platforms,
@@ -114,9 +112,10 @@ export async function generate(opts: {
       session_id: result.sessionId,
       output_dir: result.outputDir,
       exports: result.exports as Record<PlatformId, string>,
-      sticker_count: Object.keys(result.exports).length > 0
-        ? (await import('@/constants/platforms')).TOTAL_STICKERS
-        : 0,
+      sticker_count:
+        Object.keys(result.exports).length > 0
+          ? (await import('@/constants/platforms')).TOTAL_STICKERS
+          : 0,
       elapsed_time: elapsedStr,
     };
 

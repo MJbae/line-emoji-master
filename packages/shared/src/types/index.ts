@@ -5,7 +5,6 @@ export type {
   UserInput,
   CharacterSpec,
   PersonaInsight,
-  TextStyleOption,
   LLMStrategy,
   EmoteIdea,
   VisualStyle,
@@ -23,14 +22,6 @@ export type {
   LanguageEntry,
 } from './domain';
 
-export type {
-  Stage,
-  ServiceError as ServiceErrorType,
-  JobProgress,
-  EmoticonAPI,
-} from './api';
+export type { Stage, ServiceError as ServiceErrorType, JobProgress, EmoticonAPI } from './api';
 
-export type {
-  JobStatus,
-  JobSnapshot,
-} from './jobs';
+export type { JobStatus, JobSnapshot } from './jobs';

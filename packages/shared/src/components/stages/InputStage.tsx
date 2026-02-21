@@ -12,14 +12,14 @@ interface InputStageProps {
 const LANGUAGES = ['Korean', 'Japanese', 'Traditional Chinese'] as const;
 
 const LANG_META: Record<(typeof LANGUAGES)[number], { flag: string; native: string }> = {
-  Korean: { flag: '🇰🇷', native: '한국어' },
-  Japanese: { flag: '🇯🇵', native: '日本語' },
-  'Traditional Chinese': { flag: '🇹🇼', native: '繁體中文' },
+  Korean: { flag: '🇰🇷', native: '한국' },
+  Japanese: { flag: '🇯🇵', native: '일본' },
+  'Traditional Chinese': { flag: '🇹🇼', native: '대만' },
 };
 
 function InputStage({ onSubmit, initialData }: InputStageProps) {
   const [data, setData] = useState<UserInput>(
-    initialData ?? { concept: '', referenceImage: null, language: 'Korean', noText: true },
+    initialData ?? { concept: '', referenceImage: null, language: 'Korean' },
   );
   const [preview, setPreview] = useState<string | null>(null);
   const conceptId = useId();

@@ -44,7 +44,6 @@ export async function runCliPipeline(
     concept: options.concept,
     language: options.language,
     referenceImage: options.referenceImage ? loadReferenceImage(options.referenceImage) : null,
-    noText: options.noText,
   };
 
   const processingOptions: ProcessingOptions = {
@@ -63,7 +62,7 @@ export async function runCliPipeline(
   controllers.set(jobId, controller);
   const signal = controller.signal;
 
-  const confirmMode = options.auto ? 'auto' as const : 'interactive' as const;
+  const confirmMode = options.auto ? ('auto' as const) : ('interactive' as const);
 
   const onProgress = (progress: JobProgress): void => {
     emitEvent('emoticon:progress', { jobId, ...progress });
@@ -174,11 +173,14 @@ export async function runCliPipeline(
     // =====================================================================
     // Phase 3: Metadata generation
     // =====================================================================
-    reportProgress({ type: 'progress', stage: 'metadata-generation', status: 'started', message: 'Generating metadata...' });
+    reportProgress({
+      type: 'progress',
+      stage: 'metadata-generation',
+      status: 'started',
+      message: 'Generating metadata...',
+    });
 
-    const stickerBase64Images = processedImages
-      .slice(0, 6)
-      .map((img) => toRawBase64(img.data));
+    const stickerBase64Images = processedImages.slice(0, 6).map((img) => toRawBase64(img.data));
 
     const languages = [
       { code: 'ko' as const, label: 'Korean', flag: '🇰🇷', required: true, nativeName: '한국어' },
@@ -191,7 +193,12 @@ export async function runCliPipeline(
       Japanese: 'ja',
       'Traditional Chinese': 'zh-TW',
     };
-    const targetLang = (languageMap[input.language] ?? 'ko') as 'ko' | 'en' | 'ja' | 'zh-TW' | 'zh-CN';
+    const targetLang = (languageMap[input.language] ?? 'ko') as
+      | 'ko'
+      | 'en'
+      | 'ja'
+      | 'zh-TW'
+      | 'zh-CN';
 
     const metadataOptions = await generateMetadata(
       stickerBase64Images,
@@ -201,7 +208,12 @@ export async function runCliPipeline(
       genResult.characterSpec,
     );
 
-    reportProgress({ type: 'progress', stage: 'metadata-generation', status: 'complete', message: `Generated ${metadataOptions.length} metadata options` });
+    reportProgress({
+      type: 'progress',
+      stage: 'metadata-generation',
+      status: 'complete',
+      message: `Generated ${metadataOptions.length} metadata options`,
+    });
 
     // =====================================================================
     // CONFIRM 3: Metadata
@@ -231,7 +243,12 @@ export async function runCliPipeline(
     // =====================================================================
     // Phase 4: Export (all platforms)
     // =====================================================================
-    reportProgress({ type: 'progress', stage: 'export', status: 'started', message: 'Exporting to all platforms...' });
+    reportProgress({
+      type: 'progress',
+      stage: 'export',
+      status: 'started',
+      message: 'Exporting to all platforms...',
+    });
 
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
@@ -244,7 +261,12 @@ export async function runCliPipeline(
       selectedMetadata ? [selectedMetadata] : undefined,
     );
 
-    reportProgress({ type: 'progress', stage: 'export', status: 'complete', message: 'Export complete' });
+    reportProgress({
+      type: 'progress',
+      stage: 'export',
+      status: 'complete',
+      message: 'Export complete',
+    });
 
     // Save session data
     const sessionData: SessionData = {
@@ -269,7 +291,10 @@ export async function runCliPipeline(
 
     // Save metadata to output
     if (selectedMetadata) {
-      fs.writeFileSync(path.join(outputDir, 'metadata.json'), JSON.stringify(selectedMetadata, null, 2));
+      fs.writeFileSync(
+        path.join(outputDir, 'metadata.json'),
+        JSON.stringify(selectedMetadata, null, 2),
+      );
     }
 
     state.updateJob(jobId, { status: 'completed', currentStage: null });

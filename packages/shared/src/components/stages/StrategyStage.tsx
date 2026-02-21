@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Brain, TrendingUp, Palette, Globe, Users, ChevronDown, ChevronUp } from 'lucide-react';
+import { Brain, TrendingUp, Globe, Users, ChevronDown, ChevronUp } from 'lucide-react';
 import type { LLMStrategy, PersonaInsight } from '@/types/domain';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -74,7 +74,7 @@ function StrategyStage({
   if (!strategy) return null;
 
   return (
-    <section data-stage="strategy" data-phase="complete" className="max-w-6xl mx-auto space-y-8">
+    <section data-stage="strategy" data-phase="complete" className="max-w-3xl mx-auto space-y-8">
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
           <Brain size={14} />
@@ -84,99 +84,79 @@ function StrategyStage({
         <p className="text-text-muted">AI가 생성한 이모지 세트 전략을 검토하세요.</p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          {strategy.selectedTextStyle && (
-            <CollapsibleStrategyCard
-              title="텍스트 스타일"
-              icon={<Palette className="w-5 h-5 text-primary-700" />}
-              iconBg="bg-primary-100"
-              defaultExpanded={true}
-              badge={strategy.selectedTextStyle.title}
-            >
-              <p className="text-sm text-text-muted leading-relaxed break-words whitespace-normal">
-                {strategy.selectedTextStyle.styleDescription}
-              </p>
-            </CollapsibleStrategyCard>
-          )}
+      <div className="space-y-4">
+        {strategy.culturalNotes && (
+          <CollapsibleStrategyCard
+            title="문화적 고려사항"
+            icon={<Globe className="w-5 h-5 text-green-700" />}
+            iconBg="bg-green-100"
+          >
+            <p className="text-sm text-text-muted leading-relaxed break-words whitespace-normal">
+              {strategy.culturalNotes}
+            </p>
+          </CollapsibleStrategyCard>
+        )}
 
-          {strategy.culturalNotes && (
-            <CollapsibleStrategyCard
-              title="문화적 고려사항"
-              icon={<Globe className="w-5 h-5 text-green-700" />}
-              iconBg="bg-green-100"
-            >
-              <p className="text-sm text-text-muted leading-relaxed break-words whitespace-normal">
-                {strategy.culturalNotes}
-              </p>
-            </CollapsibleStrategyCard>
-          )}
+        {strategy.salesReasoning && (
+          <CollapsibleStrategyCard
+            title="판매 전략"
+            icon={<TrendingUp className="w-5 h-5 text-lime-700" />}
+            iconBg="bg-lime-100"
+          >
+            <p className="text-sm text-text-muted leading-relaxed break-words whitespace-normal">
+              {strategy.salesReasoning}
+            </p>
+          </CollapsibleStrategyCard>
+        )}
 
-          {strategy.salesReasoning && (
-            <CollapsibleStrategyCard
-              title="판매 전략"
-              icon={<TrendingUp className="w-5 h-5 text-lime-700" />}
-              iconBg="bg-lime-100"
-            >
-              <p className="text-sm text-text-muted leading-relaxed break-words whitespace-normal">
-                {strategy.salesReasoning}
-              </p>
-            </CollapsibleStrategyCard>
-          )}
-        </div>
-
-        <div className="space-y-4">
-          {strategy.personaInsights && strategy.personaInsights.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 px-1">
-                <Users className="w-4 h-4 text-text-muted" />
-                <h3 className="font-bold text-slate-700 text-xs uppercase tracking-wide">
-                  전문가 인사이트
-                </h3>
-              </div>
-              {strategy.personaInsights.map((insight: PersonaInsight, index: number) => {
-                const isExpanded = expandedInsights[index] ?? false;
-                const colors = getPersonaColor(insight.persona);
-
-                return (
-                  <Card key={index} className="overflow-hidden">
-                    <button
-                      onClick={() => toggleInsight(index)}
-                      aria-expanded={isExpanded}
-                      aria-label={`${insight.persona} insight`}
-                      data-testid={`persona-${index}`}
-                      className="w-full p-4 flex items-start gap-3 text-left hover:bg-slate-50 transition-colors"
-                    >
-                      <div className={cn('p-2 rounded-lg shrink-0 mt-0.5', colors.bg)}>
-                        <Users className={cn('w-4 h-4', colors.text)} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <h4 className="font-bold text-slate-900 text-sm">{insight.persona}</h4>
-                          <div className="shrink-0 text-slate-400">
-                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                          </div>
-                        </div>
-
-                        {!isExpanded && (
-                          <p className="text-xs text-text-muted truncate mt-1">
-                            {insight.analysis}
-                          </p>
-                        )}
-
-                        {isExpanded && (
-                          <p className="text-sm text-text-muted leading-relaxed pt-3 border-t border-slate-100 mt-3 break-words whitespace-normal">
-                            {insight.analysis}
-                          </p>
-                        )}
-                      </div>
-                    </button>
-                  </Card>
-                );
-              })}
+        {strategy.personaInsights && strategy.personaInsights.length > 0 && (
+          <>
+            <div className="flex items-center gap-2 px-1">
+              <Users className="w-4 h-4 text-text-muted" />
+              <h3 className="font-bold text-slate-700 text-xs uppercase tracking-wide">
+                전문가 인사이트
+              </h3>
             </div>
-          )}
-        </div>
+            {strategy.personaInsights.map((insight: PersonaInsight, index: number) => {
+              const isExpanded = expandedInsights[index] ?? false;
+              const colors = getPersonaColor(insight.persona);
+
+              return (
+                <Card key={index} className="overflow-hidden">
+                  <button
+                    onClick={() => toggleInsight(index)}
+                    aria-expanded={isExpanded}
+                    aria-label={`${insight.persona} insight`}
+                    data-testid={`persona-${index}`}
+                    className="w-full p-4 flex items-start gap-3 text-left hover:bg-slate-50 transition-colors"
+                  >
+                    <div className={cn('p-2 rounded-lg shrink-0 mt-0.5', colors.bg)}>
+                      <Users className={cn('w-4 h-4', colors.text)} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <h4 className="font-bold text-slate-900 text-sm">{insight.persona}</h4>
+                        <div className="shrink-0 text-slate-400">
+                          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        </div>
+                      </div>
+
+                      {!isExpanded && (
+                        <p className="text-xs text-text-muted truncate mt-1">{insight.analysis}</p>
+                      )}
+
+                      {isExpanded && (
+                        <p className="text-sm text-text-muted leading-relaxed pt-3 border-t border-slate-100 mt-3 break-words whitespace-normal">
+                          {insight.analysis}
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                </Card>
+              );
+            })}
+          </>
+        )}
       </div>
 
       <div className="flex justify-between pt-6">

@@ -5,7 +5,6 @@ import type {
   LLMStrategy,
   CharacterSpec,
   EmoteIdea,
-  TextStyleOption,
   MetaResult,
   LanguageCode,
   LanguageEntry,
@@ -107,22 +106,10 @@ async function synthesizeStrategy(
         type: Type.OBJECT,
         properties: {
           selectedVisualStyleIndex: { type: Type.INTEGER },
-          textStyle: {
-            type: Type.OBJECT,
-            properties: {
-              id: { type: Type.STRING },
-              title: { type: Type.STRING },
-              colorDescription: { type: Type.STRING },
-              styleDescription: { type: Type.STRING },
-              reasoning: { type: Type.STRING },
-              score: { type: Type.NUMBER },
-            },
-            required: ['id', 'title', 'colorDescription', 'styleDescription', 'reasoning', 'score'],
-          },
           culturalNotes: { type: Type.STRING },
           salesReasoning: { type: Type.STRING },
         },
-        required: ['selectedVisualStyleIndex', 'textStyle', 'culturalNotes', 'salesReasoning'],
+        required: ['selectedVisualStyleIndex', 'culturalNotes', 'salesReasoning'],
       },
     },
   });
@@ -132,14 +119,6 @@ async function synthesizeStrategy(
 
   const data = JSON.parse(text) as {
     selectedVisualStyleIndex: number;
-    textStyle: {
-      id: string;
-      title: string;
-      colorDescription: string;
-      styleDescription: string;
-      reasoning: string;
-      score: number;
-    };
     culturalNotes: string;
     salesReasoning: string;
   };
@@ -148,14 +127,6 @@ async function synthesizeStrategy(
 
   return {
     selectedVisualStyleIndex: styleIndex,
-    selectedTextStyle: {
-      id: data.textStyle.id,
-      title: data.textStyle.title,
-      colorDescription: data.textStyle.colorDescription,
-      styleDescription: data.textStyle.styleDescription,
-      reasoning: data.textStyle.reasoning,
-      score: data.textStyle.score,
-    },
     culturalNotes: data.culturalNotes,
     salesReasoning: data.salesReasoning,
     personaInsights: insights,
@@ -163,15 +134,14 @@ async function synthesizeStrategy(
 }
 
 export async function analyzeConcept(input: UserInput): Promise<LLMStrategy> {
-  const useFlash = input.noText ?? false;
-  const marketInsight = await consultMarketAnalyst(input, useFlash);
+  const marketInsight = await consultMarketAnalyst(input);
 
   const [artInsight, culturalInsight] = await Promise.all([
-    consultArtDirector(input, marketInsight.analysis, useFlash),
-    consultCulturalExpert(input, useFlash),
+    consultArtDirector(input, marketInsight.analysis),
+    consultCulturalExpert(input),
   ]);
 
-  return synthesizeStrategy(input, [marketInsight, artInsight, culturalInsight], useFlash);
+  return synthesizeStrategy(input, [marketInsight, artInsight, culturalInsight]);
 }
 
 export async function extractCharacterSpec(
@@ -266,7 +236,6 @@ export async function generateVisualVariation(
 
 export async function generateEmoteIdeas(
   input: UserInput,
-  textStyle: TextStyleOption,
   visualStyleName: string,
   characterSpec: CharacterSpec,
   strategyContext: { salesReasoning: string; culturalNotes: string },
@@ -274,7 +243,6 @@ export async function generateEmoteIdeas(
   const prompt = buildEmoteIdeasPrompt(
     input.concept,
     input.language,
-    textStyle,
     visualStyleName,
     characterSpec,
     strategyContext,
@@ -300,15 +268,7 @@ export async function generateEmoteIdeas(
                 useCase: { type: Type.STRING },
                 imagePrompt: { type: Type.STRING },
               },
-              required: [
-                'id',
-                'expression',
-                'action',
-                'text',
-                'category',
-                'useCase',
-                'imagePrompt',
-              ],
+              required: ['id', 'expression', 'action', 'category', 'useCase', 'imagePrompt'],
             },
           },
         },
@@ -325,11 +285,10 @@ export async function generateEmoteIdeas(
 export async function generateSingleEmote(
   idea: EmoteIdea,
   referenceImage: string,
-  textStyle: TextStyleOption,
   characterSpec: CharacterSpec,
   useFlash?: boolean,
 ): Promise<string> {
-  const prompt = buildSingleEmotePrompt(idea, characterSpec, textStyle);
+  const prompt = buildSingleEmotePrompt(idea, characterSpec);
 
   const generateFn = useFlash ? generateWithFlash : generateImage;
   const response = await generateFn({
@@ -345,82 +304,6 @@ export async function generateSingleEmote(
     }
   }
   throw new Error('Failed to generate sticker image');
-}
-
-export async function checkTextNaturalness(
-  stickerImages: string[],
-  language: string,
-): Promise<{ index: number; isNatural: boolean; reason: string }[]> {
-  const BATCH_SIZE = 6;
-  const allResults: { index: number; isNatural: boolean; reason: string }[] = [];
-
-  for (let i = 0; i < stickerImages.length; i += BATCH_SIZE) {
-    const batch = stickerImages.slice(i, i + BATCH_SIZE);
-    const batchSize = batch.length;
-
-    const prompt = `Analyze the text in each sticker image. Check for:
-1. Spelling/grammar correctness in ${language}
-2. Cultural naturalness (does the text feel native?)
-3. Readability (is the text clear and legible?)
-
-For each image (numbered 1 to ${batchSize}), respond with:
-- isNatural: true/false
-- reason: brief explanation (in Korean)
-
-If there is NO text in the image, mark it as isNatural: true.
-Only mark isNatural: false if the text has clear errors or is culturally unnatural.`;
-
-    const contents = {
-      parts: [
-        ...batch.map((image) => ({
-          inlineData: { mimeType: 'image/png' as const, data: image },
-        })),
-        { text: prompt },
-      ],
-    };
-
-    const response = await generateWithFlash({
-      contents,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            results: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  imageIndex: { type: Type.INTEGER },
-                  isNatural: { type: Type.BOOLEAN },
-                  reason: { type: Type.STRING },
-                },
-                required: ['imageIndex', 'isNatural', 'reason'],
-              },
-            },
-          },
-          required: ['results'],
-        },
-      },
-    });
-
-    const text = response.text;
-    if (!text) continue;
-
-    const data = JSON.parse(text) as {
-      results: { imageIndex: number; isNatural: boolean; reason: string }[];
-    };
-
-    for (const result of data.results) {
-      allResults.push({
-        index: i + result.imageIndex - 1,
-        isNatural: result.isNatural,
-        reason: result.reason,
-      });
-    }
-  }
-
-  return allResults;
 }
 
 export async function generateMetadata(
