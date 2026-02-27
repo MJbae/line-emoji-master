@@ -28,7 +28,7 @@ export const createConfigSlice: StateCreator<ConfigSlice, [], [], ConfigSlice> =
   apiKey: null,
   keyHydrated: 'unknown',
   language: 'Korean',
-  defaultPlatform: 'line_emoji',
+  defaultPlatform: 'line_sticker',
 
   setApiKey: (key: string) => {
     try {
