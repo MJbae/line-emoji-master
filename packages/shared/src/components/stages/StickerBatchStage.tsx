@@ -4,6 +4,7 @@ import type { Sticker } from '@/types/domain';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { AnimatedInputWrapper } from '@/components/ui/AnimatedInputWrapper';
+import { Loader } from '@/components/ui/Loader';
 
 interface StickerBatchStageProps {
   stickers: Sticker[];
@@ -50,18 +51,13 @@ function StickerBatchStage({
       <section
         data-stage="stickers"
         data-phase="idle"
-        className="max-w-2xl mx-auto space-y-8 text-center py-10"
+        className="flex flex-col items-center justify-center min-h-[50vh]"
       >
-        <div className="space-y-2">
-          <h2 className="text-3xl font-bold text-text">이모지 생성</h2>
-          <p className="text-text-muted">세트의 {totalCount}개 이모지를 자동으로 생성합니다…</p>
-        </div>
-        <div className="flex justify-center">
-          <div className="relative overflow-hidden rounded-full w-16 h-16">
-            <span className="absolute left-1/2 top-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_1.5s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0_270deg,rgba(6,199,85,0.2)_330deg,#06C755_360deg)]" />
-            <span className="absolute inset-[3px] rounded-full bg-slate-50" />
-          </div>
-        </div>
+        <Loader
+          title="이모지 자동 생성 중"
+          text={`세트의 ${totalCount}개 이모지를 자동으로 일관성 있게 생성합니다…`}
+          size="xl"
+        />
       </section>
     );
   }
@@ -152,9 +148,8 @@ function StickerBatchStage({
                     </div>
                   </>
                 ) : sticker.status === 'loading' ? (
-                  <div className="relative w-8 h-8 overflow-hidden rounded-full">
-                    <span className="absolute left-1/2 top-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_1s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0_270deg,rgba(6,199,85,0.2)_330deg,#06C755_360deg)]" />
-                    <span className="absolute inset-[2px] rounded-full bg-slate-50" />
+                  <div className="scale-75">
+                    <Loader size="sm" />
                   </div>
                 ) : sticker.status === 'error' ? (
                   <div className="text-center space-y-1.5">

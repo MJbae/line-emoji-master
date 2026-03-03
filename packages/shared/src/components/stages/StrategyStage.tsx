@@ -42,8 +42,8 @@ function StrategyStage({
 
   if (loading) {
     return (
-      <section data-stage="strategy" data-phase="loading">
-        <Loader text="AI 전문가 패널이 컨셉을 분석 중입니다…" size="lg" />
+      <section data-stage="strategy" data-phase="loading" className="flex flex-col items-center justify-center min-h-[50vh]">
+        <Loader title="컨셉 전략 분석 중" text="AI 전문가 패널이 컨셉을 분석 중입니다…" size="xl" />
       </section>
     );
   }

@@ -36,8 +36,8 @@ function CharacterStage({
 
   if (loading) {
     return (
-      <section data-stage="character" data-phase="loading">
-        <Loader text="캐릭터 생성 중…" size="lg" />
+      <section data-stage="character" data-phase="loading" className="flex flex-col items-center justify-center min-h-[50vh]">
+        <Loader title="베이스 캐릭터 디자인 중" text="프롬프트와 전략에 따라 기본 형태를 스케치 중입니다…" size="xl" />
       </section>
     );
   }

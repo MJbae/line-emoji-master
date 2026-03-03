@@ -50,8 +50,8 @@ function MetadataStage({
 
   if (loading) {
     return (
-      <section data-stage="metadata" data-phase="loading">
-        <Loader text="Gemini AI로 메타데이터 생성 중…" size="lg" />
+      <section data-stage="metadata" data-phase="loading" className="flex flex-col items-center justify-center min-h-[50vh]">
+        <Loader title="메타데이터 자동 생성 중" text="Gemini AI로 메타데이터 생성 중…" size="xl" />
       </section>
     );
   }
