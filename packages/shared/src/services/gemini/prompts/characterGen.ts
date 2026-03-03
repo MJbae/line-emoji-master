@@ -107,12 +107,20 @@ export function buildEmoteIdeasPrompt(
   visualStyleName: string,
   characterSpec: CharacterSpec,
   strategyContext: { salesReasoning: string; culturalNotes: string },
+  targetCount: number = 45,
 ): string {
   const culturalContext = getCulturalContext(language);
   const languageSpecificCategories = getLanguageSpecificCategories(language);
 
+  const c1 = Math.floor(targetCount * 0.22);
+  const c2 = Math.floor(targetCount * 0.18);
+  const c3 = Math.floor(targetCount * 0.18);
+  const c4 = Math.floor(targetCount * 0.18);
+  const c5 = Math.floor(targetCount * 0.13);
+  const c6 = targetCount - c1 - c2 - c3 - c4 - c5;
+
   return `
-Generate 45 unique emoji ideas optimized for LINE messenger emoji sales.
+Generate ${targetCount} unique emoji ideas optimized for LINE messenger emoji sales.
 These will display at 180x180px — prioritize clear, bold designs.
 Character: ${concept}
 Style: ${visualStyleName}
@@ -131,13 +139,13 @@ ${languageSpecificCategories}
 Focus on expressions and scenarios that drive the highest engagement and purchases on LINE messenger.
 Think about what makes users want to BUY and USE these stickers in daily conversations.
 
-Categories to distribute (45 total):
-1. Basic Emotions (10) - Universal emotions that get used most frequently
-2. Greetings & Responses (8) - Gestures for hi, bye, thanks, sorry, OK, NO
-3. Daily Actions (8) - Eating, coffee, work, study, gaming, music
-4. Emphasis Reactions (8) - Amazing, thumbs up, fighting, congrats, shy, rage
-5. Trending/Humor (6) - Money, lucky, healing, flex, TMI, lazy
-6. Special Occasions (5) - Birthday, new year, christmas, rainy day, cold
+Categories to distribute (${targetCount} total):
+1. Basic Emotions (${c1}) - Universal emotions that get used most frequently
+2. Greetings & Responses (${c2}) - Gestures for hi, bye, thanks, sorry, OK, NO
+3. Daily Actions (${c3}) - Eating, coffee, work, study, gaming, music
+4. Emphasis Reactions (${c4}) - Amazing, thumbs up, fighting, congrats, shy, rage
+5. Trending/Humor (${c5}) - Money, lucky, healing, flex, TMI, lazy
+6. Special Occasions (${c6}) - Birthday, new year, christmas, rainy day, cold
 
 STRATEGY DIRECTION (each imagePrompt MUST reflect this):
 - Sales Strategy: ${strategyContext.salesReasoning}

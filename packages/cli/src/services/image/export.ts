@@ -29,18 +29,40 @@ export async function generatePlatformZip(
     zip.file(fileName, rawBase64, { base64: true });
   }
 
-  // Tab image (from first image)
+  // Main and Tab extraction
   if (images.length > 0) {
-    const firstImage = images[0]!;
-    const tabResized = await resizeImage(firstImage.data, platform.tab.width, platform.tab.height);
-    const tabRawBase64 = tabResized.replace(/^data:image\/\w+;base64,/, '');
-    zip.file('tab.png', tabRawBase64, { base64: true });
+    // Pick candidates for tab: [primary, reserve1, reserve2]
+    const tabCandidates = [
+      images[0]!,
+      images.length > platform.count ? images[platform.count]! : images[0]!,
+      images.length > platform.count + 1 ? images[platform.count + 1]! : images[0]!,
+    ];
 
-    // Main image (if platform requires it)
+    // Export tabs
+    for (let i = 0; i < tabCandidates.length; i++) {
+      const candidate = tabCandidates[i]!;
+      const tabResized = await resizeImage(candidate.data, platform.tab.width, platform.tab.height);
+      const tabRawBase64 = tabResized.replace(/^data:image\/\w+;base64,/, '');
+      const filename = i === 0 ? 'tab.png' : `tab_reserve${i}.png`;
+      zip.file(filename, tabRawBase64, { base64: true });
+    }
+
+    // Export mains
     if (platform.main) {
-      const mainResized = await resizeImage(firstImage.data, platform.main.width, platform.main.height);
-      const mainRawBase64 = mainResized.replace(/^data:image\/\w+;base64,/, '');
-      zip.file('main.png', mainRawBase64, { base64: true });
+      // Pick candidates for main: [primary, reserve1, reserve2]
+      const mainCandidates = [
+        images[0]!,
+        images.length > platform.count + 2 ? images[platform.count + 2]! : images[0]!,
+        images.length > platform.count + 3 ? images[platform.count + 3]! : images[0]!,
+      ];
+
+      for (let i = 0; i < mainCandidates.length; i++) {
+        const candidate = mainCandidates[i]!;
+        const mainResized = await resizeImage(candidate.data, platform.main.width, platform.main.height);
+        const mainRawBase64 = mainResized.replace(/^data:image\/\w+;base64,/, '');
+        const filename = i === 0 ? 'main.png' : `main_reserve${i}.png`;
+        zip.file(filename, mainRawBase64, { base64: true });
+      }
     }
   }
 

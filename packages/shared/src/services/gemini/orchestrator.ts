@@ -239,6 +239,7 @@ export async function generateEmoteIdeas(
   visualStyleName: string,
   characterSpec: CharacterSpec,
   strategyContext: { salesReasoning: string; culturalNotes: string },
+  targetCount: number = 45,
 ): Promise<EmoteIdea[]> {
   const prompt = buildEmoteIdeasPrompt(
     input.concept,
@@ -246,6 +247,7 @@ export async function generateEmoteIdeas(
     visualStyleName,
     characterSpec,
     strategyContext,
+    targetCount,
   );
 
   const response = await generateText({

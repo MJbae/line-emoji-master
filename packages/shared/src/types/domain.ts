@@ -7,7 +7,7 @@
 // ---------------------------------------------------------------------------
 
 /** Unified platform identifier (generator's PlatformType + post-processor's ExportPlatform) */
-export type PlatformId = 'ogq_sticker' | 'line_sticker' | 'line_emoji';
+export type PlatformId = 'ogq_sticker' | 'line_sticker' | 'line_emoji' | 'kakaotalk_emoticon' | 'kakaotalk_mini';
 
 export interface PlatformSize {
   width: number;

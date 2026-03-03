@@ -20,6 +20,7 @@ import { exportAllPlatforms } from '../image/export.js';
 import { getSessionDir } from '../../platform/adapter.js';
 import { loadImageBuffer, toRawBase64 } from '../image/core.js';
 import type { GenerateOptions, ConfirmAction, SessionData } from '../../types/cli.js';
+import { calculateRequiredStickers } from '@/constants/platforms';
 
 const controllers = new Map<string, AbortController>();
 
@@ -72,7 +73,8 @@ export async function runCliPipeline(
     // =====================================================================
     // Phase 1: Generation (concept → character → stickers)
     // =====================================================================
-    const genResult = await runGenerationPipeline(jobId, input, onProgress, signal);
+    const targetCount = calculateRequiredStickers(options.platforms as PlatformId[]);
+    const genResult = await runGenerationPipeline(jobId, input, onProgress, signal, targetCount);
 
     // Save main image to session dir
     const mainImageBuffer = loadImageBuffer(genResult.mainImage);

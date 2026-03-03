@@ -49,6 +49,7 @@ export async function runGenerationPipeline(
   input: UserInput,
   onProgress: (progress: JobProgress) => void,
   signal?: AbortSignal,
+  targetCount: number = 45,
 ): Promise<GenerationResult> {
   const state = getAppState();
 
@@ -149,6 +150,7 @@ export async function runGenerationPipeline(
       salesReasoning: strategy.salesReasoning,
       culturalNotes: strategy.culturalNotes,
     },
+    targetCount,
   );
   const initialStickers: Sticker[] = emoteIdeas.map((idea) => ({
     id: idea.id,

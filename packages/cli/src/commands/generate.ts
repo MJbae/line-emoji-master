@@ -5,8 +5,9 @@ import { runCliPipeline } from '../services/pipeline/fullPipeline.js';
 import { printBanner, printResult, printError, isJsonMode, emitJson } from '../io/output.js';
 import { stopSpinner } from '../io/progress.js';
 import type { GenerateOptions, ResultEvent } from '../types/cli.js';
+import { calculateRequiredStickers } from '@/constants/platforms';
 
-const ALL_PLATFORMS: PlatformId[] = ['ogq_sticker', 'line_sticker', 'line_emoji'];
+const ALL_PLATFORMS: PlatformId[] = ['ogq_sticker', 'line_sticker', 'line_emoji', 'kakaotalk_emoticon', 'kakaotalk_mini'];
 
 export async function generate(opts: {
   concept: string;
@@ -57,8 +58,8 @@ export async function generate(opts: {
     opts.platforms === 'all'
       ? ALL_PLATFORMS
       : (opts.platforms
-          .split(',')
-          .filter((p) => ALL_PLATFORMS.includes(p as PlatformId)) as PlatformId[]);
+        .split(',')
+        .filter((p) => ALL_PLATFORMS.includes(p as PlatformId)) as PlatformId[]);
 
   if (platforms.length === 0) {
     printError({
@@ -114,7 +115,7 @@ export async function generate(opts: {
       exports: result.exports as Record<PlatformId, string>,
       sticker_count:
         Object.keys(result.exports).length > 0
-          ? (await import('@/constants/platforms')).TOTAL_STICKERS
+          ? calculateRequiredStickers(platforms)
           : 0,
       elapsed_time: elapsedStr,
     };
