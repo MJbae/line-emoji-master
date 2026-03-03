@@ -2,8 +2,8 @@ import type { PlatformId, PlatformSpec } from '@/types/domain';
 
 export const PLATFORM_SPECS: Record<PlatformId, PlatformSpec> = {
   ogq_sticker: {
-    label: 'OGQ 이모지',
-    description: 'For OGQ Market',
+    label: 'OGQ Sticker',
+    description: 'OGQ Market 이모티콘',
     count: 24,
     content: { width: 740, height: 640 },
     main: { width: 240, height: 240 },
@@ -11,8 +11,8 @@ export const PLATFORM_SPECS: Record<PlatformId, PlatformSpec> = {
     fileNameFormat: (i: number) => `${String(i + 1).padStart(2, '0')}.png`,
   },
   line_sticker: {
-    label: 'LINE 이모지',
-    description: '기본 이모지',
+    label: 'LINE Sticker',
+    description: 'Line 이모티콘',
     count: 40,
     content: { width: 370, height: 320 },
     main: { width: 240, height: 240 },
@@ -21,7 +21,7 @@ export const PLATFORM_SPECS: Record<PlatformId, PlatformSpec> = {
   },
   line_emoji: {
     label: 'LINE Emoji',
-    description: 'Small Emojis',
+    description: 'Line 미니 이모티콘',
     count: 40,
     content: { width: 180, height: 180 },
     main: null,
@@ -29,8 +29,8 @@ export const PLATFORM_SPECS: Record<PlatformId, PlatformSpec> = {
     fileNameFormat: (i: number) => `${String(i + 1).padStart(3, '0')}.png`,
   },
   kakaotalk_emoticon: {
-    label: '카카오톡 심사 (멈춰있는 이모티콘)',
-    description: 'KakaoTalk Static Emoticon',
+    label: '카카오톡 이모티콘',
+    description: '카카오톡 멈춰있는 이모티콘',
     count: 40,
     content: { width: 360, height: 360 },
     main: { width: 240, height: 240 },
@@ -38,8 +38,8 @@ export const PLATFORM_SPECS: Record<PlatformId, PlatformSpec> = {
     fileNameFormat: (i: number) => `${String(i + 1).padStart(2, '0')}.png`,
   },
   kakaotalk_mini: {
-    label: '카카오톡 심사 (미니 이모티콘)',
-    description: 'KakaoTalk Static Mini Emoticon',
+    label: '카카오톡 미니 이모티콘',
+    description: '카카오톡 멈춰있는 미니 이모티콘',
     count: 45,
     content: { width: 180, height: 180 },
     main: null,
