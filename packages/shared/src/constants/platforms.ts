@@ -31,7 +31,7 @@ export const PLATFORM_SPECS: Record<PlatformId, PlatformSpec> = {
   kakaotalk_emoticon: {
     label: '카카오톡 심사 (멈춰있는 이모티콘)',
     description: 'KakaoTalk Static Emoticon',
-    count: 32,
+    count: 40,
     content: { width: 360, height: 360 },
     main: { width: 240, height: 240 },
     tab: { width: 96, height: 74 },
@@ -40,7 +40,7 @@ export const PLATFORM_SPECS: Record<PlatformId, PlatformSpec> = {
   kakaotalk_mini: {
     label: '카카오톡 심사 (미니 이모티콘)',
     description: 'KakaoTalk Static Mini Emoticon',
-    count: 42,
+    count: 45,
     content: { width: 180, height: 180 },
     main: null,
     tab: { width: 96, height: 74 },
