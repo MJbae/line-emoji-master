@@ -60,6 +60,62 @@
 
 ---
 
+## OpenClaw(텔레그램)에서 CLI 조작하기
+
+### /emoji (사진 필수) — 추천 사용법
+
+OpenClaw에 `emoji` 스킬이 설치되어 있으면, 텔레그램에서 아래처럼 실행할 수 있습니다.
+
+- 사진(참조 이미지) **필수**
+- 컨셉 텍스트 **필수**
+
+예)
+`/emoji 귀엽지만 직장인 공감형 토끼`
+(위 메시지에 참조 이미지를 같이 첨부)
+
+OpenClaw는 내부적으로 다음 CLI를 실행합니다:
+
+```bash
+cd /Users/bot/emoji-studio
+npm run dev:cli -- generate \
+  -c "귀엽지만 직장인 공감형 토끼" \
+  --reference-image "/path/to/ref.jpg" \
+  --auto \
+  -o ./output
+```
+
+---
+
+OpenClaw 워크스페이스에 `emoji-studio` 스킬이 설치되어 있으면(예: `./skills/emoji-studio`), 채팅에서 CLI 작업을 시킬 수 있습니다.
+
+### 1) 키 설정(영구 저장)
+CLI는 키를 로컬에 저장합니다: `~/.emoji-master/config.json`
+
+한 번만 실행:
+```bash
+cd /Users/bot/emoji-studio
+npm run dev:cli -- config set-key <GEMINI_API_KEY>
+```
+
+(참고) OpenClaw 쪽에서 `GEMINI_API_KEY` 환경변수를 주입하면, CLI는 환경변수를 **우선** 사용하므로 `--api-key`를 매번 넣을 필요가 없습니다.
+
+### 2) 실행 예시(에이전트가 내부적으로 실행)
+
+```bash
+cd /Users/bot/emoji-studio
+npm run dev:cli -- generate \
+  -c "귀여운 고양이" \
+  --reference-image "/path/to/ref.jpg" \
+  --auto \
+  -o ./output
+```
+
+### 3) 결과물
+- 결과는 `./output/<session>/` 아래에 생성되며,
+- ZIP이 생성되는 경우 OpenClaw가 텔레그램으로 파일을 다시 전송하도록 연결할 수 있습니다.
+
+---
+
 ## 로컬 개발
 
 ### 사전 준비
