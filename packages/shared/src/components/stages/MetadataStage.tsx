@@ -155,7 +155,7 @@ function MetadataStage({
               <progress
                 value={exportProgress}
                 max={100}
-                className="w-full h-3 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-moz-progress-bar]:bg-primary [&::-moz-progress-bar]:rounded-full"
+                className="w-full h-3 overflow-hidden [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-moz-progress-bar]:bg-primary [&::-moz-progress-bar]:rounded-full"
               />
               <p className="text-xs text-text-muted text-right">{exportProgress}%</p>
             </div>
@@ -239,7 +239,7 @@ function MetaResultCard({
     scoreAvg >= 4.5 ? 'text-emerald-600' : scoreAvg >= 3.5 ? 'text-amber-600' : 'text-slate-500';
 
   const copyTags = () => {
-    navigator.clipboard.writeText(result.tags.join(', ')).catch(() => {});
+    navigator.clipboard.writeText(result.tags.join(', ')).catch(() => { });
     setCopiedTags(true);
     setTimeout(() => setCopiedTags(false), 2000);
   };

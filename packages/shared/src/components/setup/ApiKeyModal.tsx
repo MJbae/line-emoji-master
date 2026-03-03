@@ -130,7 +130,7 @@ function ApiKeyModal({ open, onSave, onClose, dismissable = false }: ApiKeyModal
 
           <Button
             onClick={handleSave}
-            disabled={!isValid || validating}
+            disabled={validating}
             className="w-full"
             size="lg"
             aria-label="Save API key"

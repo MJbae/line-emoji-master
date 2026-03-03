@@ -103,7 +103,7 @@ function ExportStage({
               max={100}
               aria-valuetext={`Export progress: ${exportProgress}%`}
               aria-label="Export progress"
-              className="w-full h-3 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-moz-progress-bar]:bg-primary [&::-moz-progress-bar]:rounded-full"
+              className="w-full h-3 overflow-hidden [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-moz-progress-bar]:bg-primary [&::-moz-progress-bar]:rounded-full"
             />
             <p role="status" aria-live="polite" className="text-sm text-text-muted">
               처리 및 리사이즈 중… {exportProgress}%

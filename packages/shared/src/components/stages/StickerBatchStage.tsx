@@ -81,7 +81,7 @@ function StickerBatchStage({
               max={totalCount}
               aria-valuetext={`${doneCount} of ${totalCount} emoji generated`}
               aria-label="Emoji generation progress"
-              className="w-full h-2 [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-moz-progress-bar]:bg-primary [&::-moz-progress-bar]:rounded-full"
+              className="w-full h-2 overflow-hidden [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-slate-200 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-webkit-progress-value]:transition-all [&::-moz-progress-bar]:bg-primary [&::-moz-progress-bar]:rounded-full"
             />
             <p className="text-xs text-text-muted mt-1 text-right">{progressPct}%</p>
           </div>
